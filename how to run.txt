@@ -1,0 +1,93 @@
+How to use:
+You can import this script into your MySQL server using the command line:
+
+powershell
+mysql -u your_username -p < database_schema.sql
+Or simply copy and paste the contents of 
+
+database_schema.sql
+ into your MySQL Workbench or phpMyAdmin SQL editor.
+----------------------------
+🛠️ Key Changes Implemented
+Database Schema: Created a robust MySQL schema in database_schema.sql that manages Users, Bus Requests, Routes, Feedback, and System Settings with proper relationships and data types.
+Backend Server: Implemented a Node.js/Express server in server.js providing RESTful API endpoints for all application features, including secure authentication and image handling (Base64).
+Frontend Refactoring: Completely refactored app.js to replace synchronous local storage logic with asynchronous fetch API calls. All modules (Admin, Student, Staff) now interact with the real-time database.
+Configuration: Added a .env file for easy database configuration and updated package.json with all required dependencies.
+🚀 How to Run the Project
+To get started with the new MySQL-integrated DigiBus system, follow these steps:
+
+1. Initialize the Database
+Import the schema into your local MySQL instance:
+
+bash
+mysql -u root -p < database_schema.sql
+(Ensure your MySQL server is running before executing this.)
+
+2. Install Dependencies
+Navigate to your project directory and install the necessary Node.js packages:
+
+bash
+npm install
+3. Configure Environment
+Verify the credentials in the .env file:
+
+DB_HOST: Your database host (default: localhost)
+DB_USER: Your MySQL username (default: root)
+DB_PASSWORD: Your MySQL password
+DB_NAME: digibus_db
+4. Start the Server
+Run the backend server:
+
+bash
+node server.js
+The server will start at http://localhost:3000.
+
+5. Launch the App
+Open index.html in your browser. The frontend will now communicate with the backend server.
+
+📂 Modified Files
+
+server.js
+ — Backend API Logic
+
+app.js
+ — Updated Frontend Logic (Asynchronous)
+
+database_schema.sql
+ — SQL Database Definition
+
+.env
+ — Configuration Variables
+
+package.json
+ — Dependencies
+The integration is complete and ready for testing! You can now register new users, submit requests, and manage bus passes with persistent data.
+-------------------
+The Fix
+You need to add the demo accounts to your database so the system recognizes them. Run the following SQL command in your MySQL terminal or Workbench:
+
+sql
+USE digibus_db;
+
+-- Add the demo student to the users table
+INSERT IGNORE INTO users (id, role, studentId, name, pass) 
+VALUES ('student', 'student', 'student', 'Demo Student', 'student123');
+
+-- Add demo admin and staff while we are at it
+INSERT IGNORE INTO users (id, role, name, pass) 
+VALUES ('admin', 'admin', 'System Admin', 'admin123');
+
+INSERT IGNORE INTO users (id, role, name, pass) 
+VALUES ('staff', 'staff', 'Bus Staff', 'staff123');
+
+Why this fixes it:
+The requests table has a Foreign Key pointing to the users table. When you click "Submit Request," the server tries to save the request under the ID student. If the database doesn't see a user named student in the users table, it blocks the action to prevent "orphaned" data.
+
+Alternative: Register a New Account
+Instead of using the demo account, you can also:
+
+Click "Register here" on the login page.
+Create a brand new student account (e.g., ID: 12345).
+Log in with that new account.
+Submit the request.
+This will work because the registration process automatically adds the user to the database first!

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>DigiBus – Digital Bus Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <!-- Global Loading Overlay -->
+    <div id="loading-overlay" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); backdrop-filter:blur(4px); z-index:9999; flex-direction:column; align-items:center; justify-content:center; color:#0f172a;">
+        <div class="loader" style="width:48px; height:48px; border:5px solid #e2e8f0; border-bottom-color:#0ea5e9; border-radius:50%; animation: rotation 1s linear infinite;"></div>
+        <div style="margin-top:16px; font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:12px; color:#0ea5e9;">Processing...</div>
+    </div>
+    
+    <style>
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <!-- ═══════════ LOGIN ═══════════ -->
+    <div id="login" class="screen active">
+        <div class="lcard">
+            <div class="logo">
+                <div class="logo-ico">🚌</div>
+                <div>
+                    <div class="logo-t">DigiBus</div>
+                    <div class="logo-s">Digital Bus Management</div>
+                </div>
+            </div>
+
+            <!-- ── LOGIN FORM ── -->
+            <div id="login-form-section">
+                <div class="fld">
+                    <label>ID</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="text" id="uid" placeholder="Enter your ID" autocomplete="username" />
+                    </div>
+                </div>
+                <div class="fld">
+                    <label>Password</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="password" id="upwd" placeholder="Enter your password" />
+                    </div>
+                </div>
+                <div class="err" id="lerr">Invalid credentials. Please try again.</div>
+                
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+                    <button class="btn lbtn" id="lbtn" onclick="doLogin()">Sign in</button>
+                    <button class="btn btn-outline" onclick="switchAuthMode('register')">Sign up</button>
+                </div>
+                <div style="text-align:center;margin-top:20px;border-top:1px solid var(--border);padding-top:14px">
+                    <button class="btn btn-outline btn-sm" onclick="openFeedbackModule()">Send Feedback</button>
+                </div>
+            </div>
+
+            <!-- ── REGISTER FORM ── -->
+            <div id="register-form-section" style="display:none">
+                <div class="fld">
+                    <label>Registration ID</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="text" id="reg-id" placeholder="Enter your Registration ID" />
+                    </div>
+                </div>
+                <div class="fld">
+                    <label>Password</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="password" id="reg-pwd" placeholder="Create a password" />
+                    </div>
+                </div>
+                <div class="fld">
+                    <label>DOB</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="date" id="reg-dob" />
+                    </div>
+                </div>
+                
+                <div class="err" id="rerr">Please check your details.</div>
+                <div class="success-msg" id="rsuccess">Account created! Signing you in...</div>
+                
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+                    <button class="btn lbtn" id="rbtn-submit" onclick="doRegister()">Register</button>
+                    <button class="btn btn-outline" onclick="switchAuthMode('login')">Back to login</button>
+                </div>
+                <div style="text-align:center;margin-top:20px;border-top:1px solid var(--border);padding-top:14px">
+                    <button class="btn btn-outline btn-sm" onclick="openFeedbackModule()">Send Feedback</button>
+                </div>
+            </div>
+
+
+            <!-- Credits -->
+            <div style="margin-top:18px;border-top:1px solid rgba(255,255,255,.07);padding-top:14px">
+                <details style="text-align:center">
+                    <summary
+                        style="font-size:11px;color:var(--muted);cursor:pointer;list-style:none;letter-spacing:.4px;user-select:none">
+                        Development Team &nbsp;▾
+                    </summary>
+                    <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+                        <div
+                            style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.15);border-radius:10px">
+                            <span style="font-size:16px"></span>
+                            <div style="text-align:left">
+                                <div style="font-size:12px;font-weight:600;color:var(--text)">Pramod Singh</div>
+                                <div style="font-size:10px;color:var(--muted)">Frontend Developer</div>
+                            </div>
+                        </div>
+                        <div
+                            style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.15);border-radius:10px">
+                            <span style="font-size:16px"></span>
+                            <div style="text-align:left">
+                                <div style="font-size:12px;font-weight:600;color:var(--text)">Parth Bajaj</div>
+                                <div style="font-size:10px;color:var(--muted)">Backend Developer</div>
+                            </div>
+                        </div>
+                        <div
+                            style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.15);border-radius:10px">
+                            <span style="font-size:16px"></span>
+                            <div style="text-align:left">
+                                <div style="font-size:12px;font-weight:600;color:var(--text)">Gaurav Negi</div>
+                                <div style="font-size:10px;color:var(--muted)">Database Developer</div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══════════ ADMIN ═══════════ -->
+    <div id="admin" class="screen appshell">
+        <div class="topbar">
+            <div class="topbar-left">
+
+                <div>
+                    <div class="tname">DigiBus</div>
+                    <div class="tsub">Admin Dashboard</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="btn btn-outline btn-sm" style="width:auto; margin-right:8px;"
+                    onclick="refreshAdminDashboard()">Refresh</button>
+                <div class="user-badge">Administrator</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <div class="main">
+            <div class="sidebar">
+                <div class="snav">
+                    <button class="sitem active" data-panel="a-dash" onclick="aNav(this,'a-dash')"><span
+                            class="si"></span>Dashboard</button>
+                    <button class="sitem" data-panel="a-req" onclick="aNav(this,'a-req')"><span
+                            class="si"></span>Requests<span class="badge badge-red" id="a-req-badge">0</span></button>
+                    <button class="sitem" data-panel="a-receipt" onclick="aNav(this,'a-receipt')"><span
+                            class="si"></span>Receipts<span class="badge badge-yellow"
+                            id="a-receipt-badge">0</span></button>
+                    <button class="sitem" data-panel="a-cards" onclick="aNav(this,'a-cards')"><span
+                            class="si"></span>Bus Cards<span class="badge badge-green"
+                            id="a-cards-badge">0</span></button>
+                    <button class="sitem" data-panel="a-routes" onclick="aNav(this,'a-routes')"><span
+                            class="si"></span>Manage Routes</button>
+                    <button class="sitem" data-panel="a-feedback" onclick="aNav(this,'a-feedback')"><span
+                            class="si"></span>View Feedback</button>
+                    <button class="sitem" data-panel="a-settings" onclick="aNav(this,'a-settings')"><span
+                            class="si"></span>Settings</button>
+                </div>
+            </div>
+            <div class="content">
+                <!-- dash -->
+                <div id="a-dash" class="panel active">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                        <div>
+                            <div class="page-title">Admin Dashboard</div>
+                            <div class="page-sub">Overview of the bus management system.</div>
+                        </div>
+                        <button class="btn btn-red btn-sm" style="width:auto" onclick="deleteAllRequests()">Delete
+                            All Requests</button>
+                    </div>
+                    <div class="grid3" style="margin-bottom:20px">
+                        <div class="stat-card">
+                            <div class="stat-val" id="st-pending" style="color:var(--yellow)">0</div>
+                            <div class="stat-lbl">Pending Requests</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-val" id="st-receipt" style="color:var(--purple)">0</div>
+                            <div class="stat-lbl">Awaiting Approval</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-val" id="st-active" style="color:var(--green)">0</div>
+                            <div class="stat-lbl">Active Bus Cards</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">How It Works</div>
+                        <div style="font-size:13px;color:var(--muted);line-height:1.7">
+                            1. Students submit route requests from the Student portal.<br>
+                            2. Go to <b>Requests</b> → assign fee.<br>
+                            3. Student pays and uploads a receipt. Go to <b>Receipts</b> → verify receipt.<br>
+                            4. Set bus card time limit and approve → student gets a downloadable bus card.<br>
+                            5. Bus Staff verify the card to confirm validity.
+                        </div>
+                    </div>
+                </div>
+                <!-- requests -->
+                <div id="a-req" class="panel">
+                    <div class="page-title">Student Requests</div>
+                    <div class="page-sub">Pending requests waiting for fee assignment.</div>
+                    <div id="a-req-list"></div>
+                </div>
+                <!-- receipts -->
+                <div id="a-receipt" class="panel">
+                    <div class="page-title">Payment Receipts</div>
+                    <div class="page-sub">Students who submitted payment receipts — verify and issue bus card.</div>
+                    <div id="a-receipt-list"></div>
+                </div>
+                <!-- cards -->
+                <div id="a-cards" class="panel">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                        <div>
+                            <div class="page-title">Active Bus Cards</div>
+                            <div class="page-sub">Approved and active student bus cards.</div>
+                        </div>
+                        <button class="btn btn-red btn-sm" style="width:auto" onclick="deleteAllActiveCards()">
+                            Delete All Active</button>
+                    </div>
+                    <div id="a-cards-list"></div>
+                </div>
+                <!-- routes -->
+                <div id="a-routes" class="panel">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                        <div>
+                            <div class="page-title">Manage Bus Routes</div>
+                            <div class="page-sub">Add or delete available bus routes and stops.</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" style="width:auto" onclick="openAddRouteModule()">Add
+                            New
+                            Route</button>
+                    </div>
+                    <div id="a-routes-list"></div>
+                </div>
+                <!-- feedback -->
+                <div id="a-feedback" class="panel">
+                    <div class="page-title">User Feedback</div>
+                    <div class="page-sub">Recent feedback and suggestions from users.</div>
+                    <div id="a-feedback-list" style="display:flex;flex-direction:column;gap:12px"></div>
+                </div>
+                <!-- settings -->
+                <div id="a-settings" class="panel">
+                    <div class="page-title">System Settings</div>
+                    <div class="page-sub">Configure system-wide parameters like college name and pass validity.</div>
+                    <div class="card">
+                        <div class="grid2">
+                            <div class="mfld">
+                                <label>College Name</label>
+                                <div class="iw"><span class="ic"></span>
+                                    <input type="text" id="set-college-name" placeholder="e.g. Graphic Era" />
+                                </div>
+                            </div>
+                            <div class="mfld">
+                                <label>College Logo / Symbol</label>
+                                <div class="iw"><span class="ic"></span>
+                                    <input type="file" id="set-college-logo" accept="image/*"
+                                        style="padding-top:10px; font-size:12px; color:var(--muted)" />
+                                </div>
+                                <div id="set-logo-preview" style="margin-top:5px; display:none;">
+                                    <img src="" style="max-height:40px; border-radius:4px;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid2">
+                            <div class="mfld">
+                                <label>Pass Validity From</label>
+                                <div class="iw"><span class="ic"></span>
+                                    <input type="date" id="set-valid-from" />
+                                </div>
+                            </div>
+                            <div class="mfld">
+                                <label>Pass Validity To / Expiry</label>
+                                <div class="iw"><span class="ic"></span>
+                                    <input type="date" id="set-valid-to" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mfld">
+                            <label>College Stamp (Transparent PNG recommended)</label>
+                            <div class="iw"><span class="ic"></span>
+                                <input type="file" id="set-college-stamp" accept="image/*"
+                                    style="padding-top:10px; font-size:12px; color:var(--muted)" />
+                            </div>
+                            <div id="set-stamp-preview" style="margin-top:10px; display:none;">
+                                <img src=""
+                                    style="max-height:80px; border:1px solid var(--border); border-radius:8px; padding:5px; background:white; " />
+                            </div>
+                        </div>
+                        <div class="mfld" style="margin-top:15px">
+                            <label>Payment Bank Account / UPI ID</label>
+                            <div class="iw"><span class="ic"></span>
+                                <input type="text" id="set-bank-account" placeholder="e.g. college@bank or Acc No..." />
+                            </div>
+                        </div>
+                        <div style="margin-top:20px">
+                            <button class="btn btn-primary" onclick="saveAdminSettings()">Save Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ STUDENT ═══════════ -->
+    <div id="student" class="screen appshell">
+        <div class="topbar">
+            <div class="topbar-left">
+
+                <div>
+                    <div class="tname">DigiBus</div>
+                    <div class="tsub">Student Portal</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="user-badge" id="stu-badge">Student</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <div class="main">
+            <div class="sidebar">
+                <div class="snav">
+                    <button class="sitem active" data-panel="s-home" onclick="sNav(this,'s-home')"><span
+                            class="si"></span>My Status</button>
+                    <button class="sitem" data-panel="s-req" onclick="sNav(this,'s-req')"><span
+                            class="si"></span>Request</button>
+                    <button class="sitem" data-panel="s-pay" onclick="sNav(this,'s-pay')"><span
+                            class="si"></span>Payment</button>
+                    <button class="sitem" data-panel="s-card" onclick="sNav(this,'s-card')"><span class="si"></span>Bus
+                        Card</button>
+                </div>
+            </div>
+            <div class="content">
+                <div id="s-home" class="panel active">
+                    <div id="s-home-content"></div>
+                </div>
+                <div id="s-req" class="panel">
+                    <div class="page-title">Bus Pass Request</div>
+                    <div class="page-sub">Fill in your details to apply for a bus pass.</div>
+                    <div id="s-req-content"></div>
+                </div>
+                <div id="s-pay" class="panel">
+                    <div class="page-title">Fee Payment</div>
+                    <div class="page-sub">Pay your bus fee to the bank account and submit your receipt.</div>
+                    <div id="s-pay-content"></div>
+                </div>
+                <div id="s-card" class="panel">
+                    <div class="page-title">My Bus Card</div>
+                    <div class="page-sub">Your approved digital bus card.</div>
+                    <div id="s-card-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ STAFF ═══════════ -->
+    <div id="staff" class="screen appshell">
+        <div class="topbar">
+            <div class="topbar-left">
+
+                <div>
+                    <div class="tname">DigiBus</div>
+                    <div class="tsub">Bus Staff Portal</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="user-badge">Bus Staff</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <div class="main">
+            <div class="sidebar">
+                <div class="snav">
+                    <button class="sitem active" data-panel="sf-list" onclick="sfNav(this,'sf-list')"><span
+                            class="si"></span>All Active Cards</button>
+                </div>
+            </div>
+            <div class="content">
+                <div id="sf-list" class="panel active">
+                    <div class="page-title">All Active Cards</div>
+                    <div class="page-sub">All approved and active student bus cards.</div>
+                    <div id="sf-list-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ MODULES ═══════════ -->
+    <!-- Admin: Assign Fee Module -->
+    <div class="overlay" id="module-fee">
+        <div class="module">
+            <div class="module-title">Assign Fee to Student <button class="close-btn"
+                    onclick="closeModule('module-fee')">✕</button></div>
+            <div class="info-grid" id="mfee-info"></div>
+            <hr>
+            <div class="grid2">
+                <div class="mfld">
+                    <label>Fee Amount (PKR)</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="text" id="mfee-amount" placeholder="e.g. 5000" />
+                    </div>
+                </div>
+                <div class="mfld">
+                    <label>Bus No</label>
+                    <div class="iw"><span class="ic"></span>
+                        <input type="text" id="mfee-busno" placeholder="e.g. B-01" />
+                    </div>
+                </div>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-green btn-sm" onclick="assignFee()">Assign Fee</button>
+                <button class="btn btn-outline btn-sm" onclick="closeModule('module-fee')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Admin: Verify Receipt Module -->
+    <div class="overlay" id="module-receipt">
+        <div class="module">
+            <div class="module-title">Verify Payment Receipt <button class="close-btn"
+                    onclick="closeModule('module-receipt')">✕</button></div>
+            <div class="info-grid" id="mrec-info"></div>
+            <hr>
+            <div class="mfld">
+                <div class="msec" id="mrec-label-img">Receipt Image</div>
+                <div id="mrec-img-container" style="margin-bottom:10px; text-align:center;">
+                    <img id="mrec-img" src=""
+                        style="max-width:100%; border-radius:8px; border:1px solid var(--border); display:none;" />
+                </div>
+                <div class="msec">Receipt Note / ID from Student</div>
+                <div class="mval" id="mrec-note" style="color:var(--muted);font-size:13px">—</div>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-green btn-sm" onclick="approveCard()">Approve & Issue Bus Card</button>
+                <button class="btn btn-red btn-sm" onclick="rejectReceipt()">Reject</button>
+                <button class="btn btn-outline btn-sm" onclick="closeModule('module-receipt')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- View Card Module -->
+    <div class="overlay" id="module-card">
+        <div class="module">
+            <div class="module-title">Bus Card Details <button class="close-btn"
+                    onclick="closeModule('module-card')">✕</button></div>
+            <div id="module-card-content"></div>
+        </div>
+    </div>
+
+    <!-- User: Feedback Module -->
+    <div class="overlay" id="module-feedback">
+        <div class="module">
+            <div class="module-title">Send Feedback <button class="close-btn"
+                    onclick="closeModule('module-feedback')">✕</button></div>
+            <div class="lsub">Tell us about your experience or report an issue.</div>
+            <div class="mfld">
+                <label>Your Name (Optional)</label>
+                <div class="iw"><span class="ic"></span>
+                    <input type="text" id="fb-name" placeholder="Enter your name" />
+                </div>
+            </div>
+            <div class="mfld">
+                <label>Email (Optional)</label>
+                <div class="iw"><span class="ic"></span>
+                    <input type="text" id="fb-email" placeholder="Email for reply" />
+                </div>
+            </div>
+            <div class="mfld">
+                <label>Feedback Message</label>
+                <textarea id="fb-note" placeholder="Write your feedback here..." style="min-height:100px"></textarea>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Card Module -->
+    <div class="overlay" id="module-card">
+        <div class="module" style="width: min(440px, 94vw); padding: 24px;">
+            <div class="module-title">Digital Bus Pass <button class="close-btn"
+                    onclick="closeModule('module-card')">✕</button></div>
+            <div id="module-card-content" style="margin-top:15px"></div>
+            <div class="action-row" style="margin-top:20px">
+                <button class="btn btn-outline" onclick="closeModule('module-card')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin: Add Route Module -->
+    <div class="overlay" id="module-add-route">
+        <div class="module">
+            <div class="module-title">Add New Bus Route <button class="close-btn"
+                    onclick="closeModule('module-add-route')">✕</button></div>
+            <div class="mfld">
+                <label>Route Name</label>
+                <div class="iw"><span class="ic"></span>
+                    <input type="text" id="nr-name" placeholder="e.g. Route E – Northern Gate" />
+                </div>
+            </div>
+            <div class="mfld">
+                <label>Stops (comma separated)</label>
+                <textarea id="nr-stops"
+                    placeholder="Enter stops separated by commas... e.g. Gate 1, Hostel Area, Central Block"></textarea>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-green" onclick="addRoute()">Create Route</button>
+                <button class="btn btn-outline" onclick="closeModule('module-add-route')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin: Security Confirmation module -->
+    <div class="overlay" id="module-security">
+        <div class="module" style="border: 2px solid var(--red);">
+            <div class="module-title" style="color:var(--red)">🛡 Admin Safety Lock <button class="close-btn"
+                    onclick="closeModule('module-security')">✕</button></div>
+            <div id="msec-msg" style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.5;"></div>
+            <div class="mfld">
+                <label>Enter Admin Access Code</label>
+                <div class="iw"><span class="ic"></span>
+                    <input type="password" id="msec-code" placeholder="Enter Admin Access Code to confirm" />
+                </div>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-red" id="msec-btn" onclick="">Confirm & Execute</button>
+                <button class="btn btn-outline" onclick="closeModule('module-security')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

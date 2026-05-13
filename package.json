@@ -1,0 +1,29 @@
+{
+  "name": "digibus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "test:e2e": "cypress run",
+    "test:all": "npm test && npm run test:e2e",
+    "test:edge": "jest tests/edge_cases.test.js && cypress run --spec cypress/e2e/edge_cases.cy.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "cypress": "^15.14.2",
+    "fast-check": "^4.7.0",
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
+  }
+}
